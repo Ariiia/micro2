@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"errors"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -38,13 +37,6 @@ func (s *NotesServer) GetNote(w http.ResponseWriter, r *http.Request) {
 	var err error
 
 	idStr := strings.TrimPrefix(r.URL.Path, "/notes/")
-
-	keys, ok := r.URL.Query()["id"]
-	if !ok || len(keys[0]) < 1 {
-		log.Println("Url Param 'id' is missing")
-		err = errors.New("URL param ID is completely and utterly missing")
-		return
-	}
 
 	// var n int
 	log.Println("getting note(GET)")
