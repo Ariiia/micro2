@@ -60,8 +60,8 @@ func main() {
 	r.HandleFunc("/api/service1/ping", visits_server.Ping)
 	r.HandleFunc("/api/service1/notes/", notes_server.GetNote).Methods("GET")
 	r.HandleFunc("/api/service1/new", notes_server.MakeNote).Methods("POST")
-	r.HandleFunc("/api/service1/notes/:id", notes_server.ChangeNote).Methods("PUT")
-	r.HandleFunc("/api/service1/delete/:id", notes_server.DeleteNote).Methods("DELETE")
+	r.HandleFunc("/api/service1/notes/{id}", notes_server.ChangeNote).Methods("PUT")
+	r.HandleFunc("/api/service1/delete/{id}", notes_server.DeleteNote).Methods("DELETE")
 
 	fmt.Printf("Starting server at port ")
 	fmt.Println(httpPort)

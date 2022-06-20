@@ -110,8 +110,10 @@ func (s *NotesServer) DeleteNote(w http.ResponseWriter, r *http.Request) {
 			_, _ = w.Write([]byte(http.StatusText(http.StatusInternalServerError)))
 		}
 	}()
-
-	_, err = s.db.DeleteNote(r.Context())
+	
+	params := mux.Vars(r)
+	id := params["id"]
+	_, err = s.db.DeleteNote(r.Context(), id)
 }
 
 func (s *Server) Ping(w http.ResponseWriter, r *http.Request) {

@@ -62,15 +62,15 @@ func (r *Repository) MakeNote(ctx context.Context, body string) (int, error) {
 	return nil*/
 }
 
-func (r *Repository) ChangeNote(ctx context.Context) (int, error) {
-	//addd
-	panic("not imnplemented")
+func (r *Repository) ChangeNote(ctx context.Context, description string, id int32) error {
+	_, err := conn.Exec( "update notes set body=$1 where id=$2", description, id)
+	return err
 }
 
-func (r *Repository) DeleteNote(ctx context.Context) (int, error) {
-	//addd
-	panic("not imnplemented")
-
+func (r *Repository) DeleteNote(ctx context.Context, id int32) error {
+	_, err = conn.Exec("delete from notes where id=$1", id)
+	
+	return err
 }
 
 func (r *Repository) Get(ctx context.Context) (int, error) {
