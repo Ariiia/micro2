@@ -19,13 +19,37 @@ type Note struct {
 	body string `json:"body"`
 }
 
-func (r *Repository) GetNote(ctx context.Context) error {
-	panic("not imnplemented")
-	//addd
+func (r *Repository) GetNote(ctx context.Context, id int) (string, error) {
+
+	rows, err := r.db.Query(ctx, "SELECT body FROM notes WHERE id = $1", id)
+	if err != nil {
+		return "", err
+	}
+
+	var note string
+	rows.Next()
+	err = rows.Scan(note)
+	if err != nil {
+		return "", err
+	}
+
+	/*var count int
+	for rows.Next() {
+		err = rows.Scan(&count)
+		if err != nil {
+			return err
+		}
+	}*/
+
+	return note, rows.Err()
 }
 
-func (r *Repository) MakeNote(ctx context.Context) (int, error) {
-	panic("not imnplemented")
+func (r *Repository) MakeNote(ctx context.Context, body string) (int, error) {
+
+	_, err := r.db.Exec(context.Background(),
+		"insert into notes(body) values($1)", body)
+
+	return 0, err
 	/*note := Note{}
 	err := ctx.BodyParser(&note)
 	if err != nil {
