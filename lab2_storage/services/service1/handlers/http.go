@@ -1,14 +1,13 @@
 package handlers
 
 import (
+	"errors"
 	"fmt"
+	"gitlab.com/kpi-lab/microservices-demo/services/service1/repository"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"strconv"
-	"strings"
-
-	"gitlab.com/kpi-lab/microservices-demo/services/service1/repository"
 )
 
 type NotesServer struct {
@@ -36,7 +35,12 @@ func (s *NotesServer) GetNote(w http.ResponseWriter, r *http.Request) {
 	//ADD CODE
 	var err error
 
-	idStr := strings.TrimPrefix(r.URL.Path, "/notes/")
+	keys, ok := r.URL.Query()["id"]
+	if !ok || len(keys[0]) < 1 {
+		log.Println("Url Param 'id' is missing")
+		err = errors.New("URL param ID is completely and utterly missing")
+		return
+	}
 
 	// var n int
 	log.Println("getting note(GET)")
@@ -47,7 +51,7 @@ func (s *NotesServer) GetNote(w http.ResponseWriter, r *http.Request) {
 		}
 	}()
 
-	id, err := strconv.Atoi(idStr)
+	id, err := strconv.Atoi(keys[0])
 
 	note, err := s.db.GetNote(r.Context(), id)
 	_, err = w.Write([]byte(note))
@@ -59,7 +63,7 @@ func (s *NotesServer) MakeNote(w http.ResponseWriter, r *http.Request) {
 	defer func() {
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
-			_, _ = w.Write([]byte(http.StatusText(http.StatusInternalServerError)))
+			_, _ = w.Write([]byte(http.StatusText(http.StatusInternalServerError) + " \n" + err.Error()))
 		}
 	}()
 
