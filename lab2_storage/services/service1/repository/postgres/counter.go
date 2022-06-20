@@ -2,7 +2,6 @@ package postgres
 
 import (
 	"context"
-
 	"github.com/jackc/pgx/v4"
 )
 
@@ -17,15 +16,17 @@ func New(db *pgx.Conn) *Repository {
 }
 
 type Note struct {
-	body	string	`json:"body"`
+	body string `json:"body"`
 }
 
-func (r *Repository) getNote(ctx context.Context) ( error){
+func (r *Repository) GetNote(ctx context.Context) error {
+	panic("not imnplemented")
 	//addd
 }
 
-func (r *Repository) makeNote(ctx context.Context) ( error){
-	note := Note{}
+func (r *Repository) MakeNote(ctx context.Context) (int, error) {
+	panic("not imnplemented")
+	/*note := Note{}
 	err := ctx.BodyParser(&note)
 	if err != nil {
 		return err
@@ -34,19 +35,19 @@ func (r *Repository) makeNote(ctx context.Context) ( error){
 	if err != nil {
 		return err
 	}
-	return nil
+	return nil*/
 }
 
-func (r *Repository) changeNote(ctx context.Context) ( error){
+func (r *Repository) ChangeNote(ctx context.Context) (int, error) {
 	//addd
-
+	panic("not imnplemented")
 }
 
-func (r *Repository) deleteNote(ctx context.Context) ( error){
+func (r *Repository) DeleteNote(ctx context.Context) (int, error) {
 	//addd
+	panic("not imnplemented")
 
 }
-
 
 func (r *Repository) Get(ctx context.Context) (int, error) {
 	rows, err := r.db.Query(ctx, "SELECT counter FROM visits")
