@@ -52,22 +52,19 @@ func main() {
 	defer conn.Close(ctx)
 
 	connection := postgres.New(conn)
-	visits_server := handlers.New(connection)
+	visits_server := handlers.NewVisitsServer(connection)
 
-	notes_server:= handlers.New(connection)
+	notes_server := handlers.NewNotesServer(connection)
 
 	r := mux.NewRouter()
 	r.HandleFunc("/api/service1/ping", visits_server.Ping)
-	r.HandleFunc("/api/service1/notes/:id", notes_server.getNote).Methods("GET")
-	r.HandleFunc("/api/service1/new", notes_server.makeNote).Methods("POST")
-	r.HandleFunc("/api/service1/notes/:id", notes_server.changeNote).Methods("PUT")
-	r.HandleFunc("/api/service1/delete/:id", notes_server.deleteNote).Methods("DELETE")
+	r.HandleFunc("/api/service1/notes/:id", notes_server.GetNote).Methods("GET")
+	r.HandleFunc("/api/service1/new", notes_server.MakeNote).Methods("POST")
+	r.HandleFunc("/api/service1/notes/:id", notes_server.ChangeNote).Methods("PUT")
+	r.HandleFunc("/api/service1/delete/:id", notes_server.DeleteNote).Methods("DELETE")
 
-
-	fmt.Printf("Starting server at port..."+httpPort)
-
-
-
+	fmt.Printf("Starting server at port ")
+	fmt.Println(httpPort)
 
 	err = http.ListenAndServe(fmt.Sprintf(":%d", httpPort), r)
 	if err != nil {

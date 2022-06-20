@@ -10,10 +10,9 @@ import (
 
 type NotesServer struct {
 	db repository.Notes
-	
 }
 
-func New(db repository.Notes) *NotesServer {
+func NewNotesServer(db repository.Notes) *NotesServer {
 	return &NotesServer{
 		db: db,
 	}
@@ -21,19 +20,18 @@ func New(db repository.Notes) *NotesServer {
 
 type Server struct {
 	db repository.Visits
-	
 }
 
-func New(db repository.Visits) *Server {
+func NewVisitsServer(db repository.Visits) *Server {
 	return &Server{
 		db: db,
 	}
 }
 
-func (s *NotesServer) getNote(w http.ResponseWriter, r *http.Request) {
+func (s *NotesServer) GetNote(w http.ResponseWriter, r *http.Request) {
 	//ADD CODE
 	var err error
-	var n int
+	// var n int
 	log.Println("getting note(GET)")
 	defer func() {
 		if err != nil {
@@ -42,10 +40,10 @@ func (s *NotesServer) getNote(w http.ResponseWriter, r *http.Request) {
 		}
 	}()
 
-	err = s.db.getNote(r.Context())
+	err = s.db.GetNote(r.Context())
 }
 
-func (s *NotesServer) makeNote(w http.ResponseWriter, r *http.Request) {
+func (s *NotesServer) MakeNote(w http.ResponseWriter, r *http.Request) {
 	var err error
 	log.Println("making note(POST)")
 	defer func() {
@@ -55,7 +53,7 @@ func (s *NotesServer) makeNote(w http.ResponseWriter, r *http.Request) {
 		}
 	}()
 
-	err = s.db.makeNote(r.Context())
+	_, err = s.db.MakeNote(r.Context())
 	if err != nil {
 		log.Println("failed to create note: %w", err)
 	}
@@ -65,10 +63,10 @@ func (s *NotesServer) makeNote(w http.ResponseWriter, r *http.Request) {
 	_, err = w.Write([]byte(msg))
 }
 
-func (s *NotesServer) changeNote(w http.ResponseWriter, r *http.Request) {
+func (s *NotesServer) ChangeNote(w http.ResponseWriter, r *http.Request) {
 	//ADD CODE
 	var err error
-	var n int
+	//var n int
 
 	log.Println("editing note(PUT)")
 	defer func() {
@@ -78,13 +76,13 @@ func (s *NotesServer) changeNote(w http.ResponseWriter, r *http.Request) {
 		}
 	}()
 
-	err = s.db.changeNote(r.Context())
+	_, err = s.db.ChangeNote(r.Context())
 }
 
-func (s *NotesServer) deleteNote(w http.ResponseWriter, r *http.Request) {
+func (s *NotesServer) DeleteNote(w http.ResponseWriter, r *http.Request) {
 	//ADD CODE
 	var err error
-	var n int
+	//var n int
 	log.Println("deleting note(DELETE)")
 	defer func() {
 		if err != nil {
@@ -93,9 +91,8 @@ func (s *NotesServer) deleteNote(w http.ResponseWriter, r *http.Request) {
 		}
 	}()
 
-	err = s.db.deleteNote(r.Context())
+	_, err = s.db.DeleteNote(r.Context())
 }
-
 
 func (s *Server) Ping(w http.ResponseWriter, r *http.Request) {
 	var current int
