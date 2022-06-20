@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"errors"
 	"fmt"
 	"gitlab.com/kpi-lab/microservices-demo/services/service1/repository"
 	"io/ioutil"
@@ -35,12 +34,14 @@ func (s *NotesServer) GetNote(w http.ResponseWriter, r *http.Request) {
 	//ADD CODE
 	var err error
 
+
 	keys, ok := r.URL.Query()["id"]
 	if !ok || len(keys[0]) < 1 {
 		log.Println("Url Param 'id' is missing")
 		err = errors.New("URL param ID is completely and utterly missing")
 		return
 	}
+
 
 	// var n int
 	log.Println("getting note(GET)")
