@@ -30,6 +30,20 @@ func NewVisitsServer(db repository.Visits) *Server {
 	}
 }
 
+
+
+// func (s *NotesServer) GetAll(w http.ResponseWriter, r *http.Request) {
+// 	w.Header().Set("Content-Type", "application/json")
+// 	lines, err := s.db.GetAll(r.Context()) 
+// 	if err != nil{
+// 		w.WriteHeader(http.StatusInternalServerError)
+// 		w.Write([]byte(err.Error()))
+// 	} else {
+// 		json.NewEncoder(w).Encode(lines)
+		
+// 	}
+// }
+
 func (s *NotesServer) GetNote(w http.ResponseWriter, r *http.Request) {
 
 	//ADD CODE

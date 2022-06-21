@@ -15,9 +15,36 @@ func New(db *pgx.Conn) *Repository {
 	}
 }
 
-type Note struct {
-	body string `json:"body"`
-}
+// type Note struct {
+// 	id int `json:"id"`
+// 	body string `json:"body"`
+// }
+
+// func (r *Repository) GetAll(ctx context.Context)  ([]Note, error) {
+// 	var notes []main.Note
+// 	query := `select id, body from notes;`
+
+// 	rows, err = r.db.Query(ctx, query)
+// 	if err != nil {
+// 		return notes, err
+// 	}
+
+	
+// 	for rows.Next(){
+// 		var ID int
+// 		var BODY string
+// 		err := rows.Scan(&ID, &BODY)
+// 		if er != nil {
+// 			return notes, er
+// 		}
+
+// 		note := main.Note {id: ID, body : BODY}
+// 		notes.append(notes, note)
+// 	}
+// 	defer rows.Close()
+// 	return notes, nil
+// }
+
 
 func (r *Repository) GetNote(ctx context.Context, id int) (string, error) {
 

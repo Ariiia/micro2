@@ -6,7 +6,6 @@ import (
 	"log"
 	"net/http"
 	"os"
-
 	"github.com/gorilla/mux"
 	"github.com/jackc/pgx/v4"
 
@@ -30,14 +29,12 @@ func init() {
 	pgDb = os.Getenv("POSTGRES_DB")
 }
 
+
 // type Note struct {
 // 	body string `json:"body"`
 // }
 
-// func getNote(w http.ResponseWriter, r *http.Request){
-// 	w.Header().Set("Content-Type", "application/json")
-// 	json.
-// }
+
 
 func main() {
 	ctx, cancel := context.WithCancel(context.Background())
@@ -58,6 +55,7 @@ func main() {
 
 	r := mux.NewRouter()
 	r.HandleFunc("/api/service1/ping", visits_server.Ping)
+	// r.HandleFunc("/api/service1/all", notes_server.GetAll).Methods("GET")
 	r.HandleFunc("/api/service1/notes/", notes_server.GetNote).Methods("GET")
 	r.HandleFunc("/api/service1/new", notes_server.MakeNote).Methods("POST")
 	r.HandleFunc("/api/service1/notes/:id", notes_server.ChangeNote).Methods("PUT")
