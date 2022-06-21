@@ -3,14 +3,12 @@ package main
 import (
 	"context"
 	"fmt"
-	"log"
-	"net/http"
-	"os"
 	"github.com/gorilla/mux"
 	"github.com/jackc/pgx/v4"
-
 	"gitlab.com/kpi-lab/microservices-demo/services/service1/handlers"
 	"gitlab.com/kpi-lab/microservices-demo/services/service1/repository/postgres"
+	"log"
+	"net/http"
 )
 
 var (
@@ -23,18 +21,19 @@ var (
 
 func init() {
 	httpPort = 8080
-	pgUser = os.Getenv("POSTGRES_USER")
-	pgPass = os.Getenv("POSTGRES_PASSWORD")
-	pgHost = os.Getenv("POSTGRES_HOST")
-	pgDb = os.Getenv("POSTGRES_DB")
+	// pgUser = os.Getenv("POSTGRES_USER")
+	pgUser = "postgres"
+	// pgPass = os.Getenv("POSTGRES_PASSWORD")
+	pgPass = "admin"
+	// pgHost = os.Getenv("POSTGRES_HOST")
+	pgHost = "localhost"
+	// pgDb = os.Getenv("POSTGRES_DB")
+	pgDb = "notes"
 }
-
 
 // type Note struct {
 // 	body string `json:"body"`
 // }
-
-
 
 func main() {
 	ctx, cancel := context.WithCancel(context.Background())
@@ -58,8 +57,8 @@ func main() {
 	r.HandleFunc("/api/service1/all", notes_server.GetAll).Methods("GET")
 	r.HandleFunc("/api/service1/notes/", notes_server.GetNote).Methods("GET")
 	r.HandleFunc("/api/service1/new", notes_server.MakeNote).Methods("POST")
-	r.HandleFunc("/api/service1/notes/:id", notes_server.ChangeNote).Methods("PUT")
-	r.HandleFunc("/api/service1/delete/:id", notes_server.DeleteNote).Methods("DELETE")
+	r.HandleFunc("/api/service1/notes/", notes_server.ChangeNote).Methods("PUT")
+	r.HandleFunc("/api/service1/delete/", notes_server.DeleteNote).Methods("DELETE")
 
 	fmt.Printf("Starting server at port ")
 	fmt.Println(httpPort)

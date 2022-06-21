@@ -102,11 +102,8 @@ func (s *NotesServer) MakeNote(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *NotesServer) ChangeNote(w http.ResponseWriter, r *http.Request) {
-	//ADD CODE
 	var err error
-	//var n int
 
-	log.Println("editing note(PUT)")
 	defer func() {
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
@@ -114,12 +111,34 @@ func (s *NotesServer) ChangeNote(w http.ResponseWriter, r *http.Request) {
 		}
 	}()
 
-	_, err = s.db.ChangeNote(r.Context())
+	keys, ok := r.URL.Query()["id"]
+	if !ok || len(keys[0]) < 1 {
+		err = errors.New("URL param ID is completely and utterly missing")
+		return
+	}
+
+	id, err1 := strconv.Atoi(keys[0])
+	if err1 != nil {
+		err = errors.New("invalid ID format. Should be a number")
+		return
+	}
+
+	defer r.Body.Close()
+	newBody, _ := ioutil.ReadAll(r.Body)
+
+	_, err = s.db.ChangeNote(r.Context(), id, string(newBody))
+
+	if err == nil {
+		w.WriteHeader(http.StatusOK)
+		msg := fmt.Sprintf("Changed note")
+		_, err = w.Write([]byte(msg))
+	}
 }
 
 func (s *NotesServer) DeleteNote(w http.ResponseWriter, r *http.Request) {
 	//ADD CODE
 	var err error
+
 	//var n int
 	log.Println("deleting note(DELETE)")
 	defer func() {
@@ -129,7 +148,25 @@ func (s *NotesServer) DeleteNote(w http.ResponseWriter, r *http.Request) {
 		}
 	}()
 
-	_, err = s.db.DeleteNote(r.Context())
+	keys, ok := r.URL.Query()["id"]
+	if !ok || len(keys[0]) < 1 {
+		err = errors.New("URL param ID is completely and utterly missing")
+		return
+	}
+
+	id, err1 := strconv.Atoi(keys[0])
+	if err1 != nil {
+		err = errors.New("invalid ID format. Should be a number")
+		return
+	}
+
+	_, err = s.db.DeleteNote(r.Context(), id)
+
+	if err == nil {
+		w.WriteHeader(http.StatusOK)
+		msg := fmt.Sprintf("Deleted note")
+		_, err = w.Write([]byte(msg))
+	}
 }
 
 func (s *Server) Ping(w http.ResponseWriter, r *http.Request) {
