@@ -23,7 +23,7 @@ type Notes interface {
 	GetAll(ctx context.Context) ([]Note, error)
 	GetNote(ctx context.Context, id int) (string, error)
 	MakeNote(ctx context.Context, body string) (int, error)
-	ChangeNote(ctx context.Context) (int, error)
+	ChangeNote(ctx context.Context, id int, newBody string) (int, error)
 	DeleteNote(ctx context.Context, id int) (int, error)
 }
 
@@ -80,9 +80,11 @@ func (r *Repository) MakeNote(ctx context.Context, body string) (int, error) {
 	return nil*/
 }
 
-func (r *Repository) ChangeNote(ctx context.Context) (int, error) {
-	//addd
-	panic("not imnplemented")
+func (r *Repository) ChangeNote(ctx context.Context, id int, newBody string) (int, error) {
+	_, err := r.db.Exec(context.Background(),
+		"update notes set body = $2 where id = $1", id, newBody)
+
+	return 0, err
 }
 
 func (r *Repository) DeleteNote(ctx context.Context, id int) (int, error) {
