@@ -14,7 +14,8 @@ spec:
     spec:
       initContainers:
         - name: run-migrations
-          image: service1-migrations:0.1
+          image: leonidius20/service1-migrations:0.1
+          imagePullPolicy: Always
           command: ["migrate", "-path", "/migrations", "-database",  "$(POSTGRESQL_URL)", "goto", "$(VERSION)"] # CLI команда запуску міграцій, де $(POSTGRESQL_URL) і $(VERSION) змінні середовища
           env:
             - name: POSTGRESQL_URL
@@ -22,9 +23,9 @@ spec:
             - name: VERSION
               value: "20211128095755"
       containers:
-        - image: service1:0.2      # образ Docker
+        - image: leonidius20/service1:0.2      # образ Docker
           name: service1           # ім'я контейнера
-          imagePullPolicy: Never
+          imagePullPolicy: Always
           ports:
             - containerPort: 8080  # порт по якому можна звертатись до поди
           envFrom:
