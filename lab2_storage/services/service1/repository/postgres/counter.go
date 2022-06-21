@@ -3,6 +3,7 @@ package postgres
 import (
 	"context"
 	"github.com/jackc/pgx/v4"
+	"strconv"
 )
 
 type Repository struct {
@@ -16,8 +17,8 @@ func New(db *pgx.Conn) *Repository {
 }
 
 type Note struct {
-	id   int    `json:"id"`
-	body string `json:"body"`
+	Id   int    `json:"id"`
+	Body string `json:"body"`
 }
 type Notes interface {
 	GetAll(ctx context.Context) ([]Note, error)
@@ -41,11 +42,12 @@ func (r *Repository) GetAll(ctx context.Context) ([]Note, error) {
 		var ID int
 		var BODY string
 		err = rows.Scan(&ID, &BODY)
+		println("ID " + strconv.FormatInt(int64(ID), 10) + " body " + BODY)
 		if err != nil {
 			return notes, err
 		}
 
-		note := Note{id: ID, body: BODY}
+		note := Note{Id: ID, Body: BODY}
 		notes = append(notes, note)
 	}
 	return notes, nil
