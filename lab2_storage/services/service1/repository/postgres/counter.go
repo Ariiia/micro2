@@ -3,7 +3,6 @@ package postgres
 import (
 	"context"
 	"github.com/jackc/pgx/v4"
-	"strconv"
 )
 
 type Repository struct {
@@ -25,7 +24,7 @@ type Notes interface {
 	GetNote(ctx context.Context, id int) (string, error)
 	MakeNote(ctx context.Context, body string) (int, error)
 	ChangeNote(ctx context.Context) (int, error)
-	DeleteNote(ctx context.Context) (int, error)
+	DeleteNote(ctx context.Context, id int) (int, error)
 }
 
 func (r *Repository) GetAll(ctx context.Context) ([]Note, error) {
@@ -42,7 +41,6 @@ func (r *Repository) GetAll(ctx context.Context) ([]Note, error) {
 		var ID int
 		var BODY string
 		err = rows.Scan(&ID, &BODY)
-		println("ID " + strconv.FormatInt(int64(ID), 10) + " body " + BODY)
 		if err != nil {
 			return notes, err
 		}
@@ -87,10 +85,11 @@ func (r *Repository) ChangeNote(ctx context.Context) (int, error) {
 	panic("not imnplemented")
 }
 
-func (r *Repository) DeleteNote(ctx context.Context) (int, error) {
-	//addd
-	panic("not imnplemented")
+func (r *Repository) DeleteNote(ctx context.Context, id int) (int, error) {
+	_, err := r.db.Exec(context.Background(),
+		"delete from notes where id = $1", id)
 
+	return 0, err
 }
 
 func (r *Repository) Get(ctx context.Context) (int, error) {
