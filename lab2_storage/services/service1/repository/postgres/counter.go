@@ -52,28 +52,14 @@ func (r *Repository) GetAll(ctx context.Context) ([]Note, error) {
 }
 
 func (r *Repository) GetNote(ctx context.Context, id int) (string, error) {
-
-	rows, err := r.db.Query(ctx, "SELECT body FROM notes WHERE id = $1", id)
-	if err != nil {
-		return "", err
-	}
-
 	var note string
-	rows.Next()
-	err = rows.Scan(note)
+	err := r.db.QueryRow(ctx, "SELECT body FROM notes WHERE id = $1", id).Scan(&note)
+
 	if err != nil {
-		return "", err
+		return "There has been some kind of an error, look: " + err.Error(), err
 	}
 
-	/*var count int
-	for rows.Next() {
-		err = rows.Scan(&count)
-		if err != nil {
-			return err
-		}
-	}*/
-
-	return note, rows.Err()
+	return note, nil
 }
 
 func (r *Repository) MakeNote(ctx context.Context, body string) (int, error) {
