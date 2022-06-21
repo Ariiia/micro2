@@ -16,69 +16,50 @@ func New(db *pgx.Conn) *Repository {
 }
 
 type Note struct {
-	id int `json:"id"`
+	id   int    `json:"id"`
 	body string `json:"body"`
 }
 type Notes interface {
-	GetAll(ctx context.Context)  ([]Note, error)
+	GetAll(ctx context.Context) ([]Note, error)
 	GetNote(ctx context.Context, id int) (string, error)
 	MakeNote(ctx context.Context, body string) (int, error)
 	ChangeNote(ctx context.Context) (int, error)
 	DeleteNote(ctx context.Context) (int, error)
-	
 }
 
-
-
-func (r *Repository) GetAll(ctx context.Context)  ([]Note, error) {
+func (r *Repository) GetAll(ctx context.Context) ([]Note, error) {
 	var notes []Note
 	query := `select id, body from notes;`
 
-	rows, err = r.db.Query(ctx, query)
+	rows, err := r.db.Query(ctx, query)
 	if err != nil {
 		return notes, err
 	}
 	defer rows.Close()
 
-	
-	for rows.Next(){
+	for rows.Next() {
 		var ID int
 		var BODY string
-		err := rows.Scan(&ID, &BODY)
-		if er != nil {
-			return notes, er
+		err = rows.Scan(&ID, &BODY)
+		if err != nil {
+			return notes, err
 		}
 
-		note := Note {id: ID, body : BODY,}
+		note := Note{id: ID, body: BODY}
 		notes = append(notes, note)
 	}
 	return notes, nil
 }
 
-
 func (r *Repository) GetNote(ctx context.Context, id int) (string, error) {
-
-	rows, err := r.db.Query(ctx, "SELECT body FROM notes WHERE id = $1", id)
-	if err != nil {
-		return "", err
-	}
-
 	var note string
-	rows.Next()
-	err = rows.Scan(note)
+	err := r.db.QueryRow(ctx, "SELECT body FROM notes WHERE id = $1", id).Scan(&note)
+
 	if err != nil {
-		return "", err
+		return "There has been some kind of an error, look: " + err.Error(), err
 	}
 
-	/*var count int
-	for rows.Next() {
-		err = rows.Scan(&count)
-		if err != nil {
-			return err
-		}
-	}*/
-
-	return note, rows.Err()
+	return note, nil
 }
 
 func (r *Repository) MakeNote(ctx context.Context, body string) (int, error) {

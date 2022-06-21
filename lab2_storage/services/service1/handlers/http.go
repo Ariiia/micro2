@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"gitlab.com/kpi-lab/microservices-demo/services/service1/repository"
@@ -12,10 +13,10 @@ import (
 )
 
 type NotesServer struct {
-	db repository.postgres.Notes
+	db postgres.Notes
 }
 
-func NewNotesServer(db repository.postgres.Notes) *NotesServer {
+func NewNotesServer(db postgres.Notes) *NotesServer {
 	return &NotesServer{
 		db: db,
 	}
@@ -31,45 +32,51 @@ func NewVisitsServer(db repository.Visits) *Server {
 	}
 }
 
-
-
 func (s *NotesServer) GetAll(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	lines, err := s.db.GetAll(r.Context()) 
-	if err != nil{
+	lines, err := s.db.GetAll(r.Context())
+	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))
 	} else {
 		json.NewEncoder(w).Encode(lines)
-		
+
 	}
 }
 
 func (s *NotesServer) GetNote(w http.ResponseWriter, r *http.Request) {
-
-	//ADD CODE
 	var err error
+
+	defer func() {
+		if err != nil {
+			// w.WriteHeader(http.StatusInternalServerError)
+			_, _ = w.Write([]byte("An error happened: " + err.Error()))
+		}
+	}()
 
 	keys, ok := r.URL.Query()["id"]
 	if !ok || len(keys[0]) < 1 {
-		log.Println("Url Param 'id' is missing")
 		err = errors.New("URL param ID is completely and utterly missing")
 		return
 	}
 
-	// var n int
-	log.Println("getting note(GET)")
-	defer func() {
-		if err != nil {
-			w.WriteHeader(http.StatusInternalServerError)
-			_, _ = w.Write([]byte(http.StatusText(http.StatusInternalServerError)))
-		}
-	}()
+	id, err1 := strconv.Atoi(keys[0])
+	if err1 != nil {
+		err = errors.New("invalid ID format. Should be a number")
+		return
+	}
 
-	id, err := strconv.Atoi(keys[0])
+	note, err2 := s.db.GetNote(r.Context(), id)
+	if err2 != nil {
+		err = errors.New("database error: " + err2.Error())
+		return
+	}
 
-	note, err := s.db.GetNote(r.Context(), id)
-	_, err = w.Write([]byte(note))
+	_, err3 := w.Write([]byte("{notetext: " + note + "}"))
+	if err3 != nil {
+		err = errors.New("error writing output to response writer")
+		return
+	}
 }
 
 func (s *NotesServer) MakeNote(w http.ResponseWriter, r *http.Request) {
