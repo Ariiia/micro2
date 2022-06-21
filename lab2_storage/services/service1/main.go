@@ -9,6 +9,7 @@ import (
 	"gitlab.com/kpi-lab/microservices-demo/services/service1/repository/postgres"
 	"log"
 	"net/http"
+	"os"
 )
 
 var (
@@ -21,14 +22,14 @@ var (
 
 func init() {
 	httpPort = 8080
-	// pgUser = os.Getenv("POSTGRES_USER")
-	pgUser = "postgres"
-	// pgPass = os.Getenv("POSTGRES_PASSWORD")
-	pgPass = "admin"
-	// pgHost = os.Getenv("POSTGRES_HOST")
-	pgHost = "localhost"
-	// pgDb = os.Getenv("POSTGRES_DB")
-	pgDb = "notes"
+	pgUser = os.Getenv("POSTGRES_USER")
+	//pgUser = "postgres"
+	pgPass = os.Getenv("POSTGRES_PASSWORD")
+	//pgPass = "admin"
+	pgHost = os.Getenv("POSTGRES_HOST")
+	//pgHost = "localhost"
+	pgDb = os.Getenv("POSTGRES_DB")
+	//pgDb = "notes"
 }
 
 // type Note struct {
