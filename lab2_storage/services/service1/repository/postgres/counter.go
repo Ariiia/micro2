@@ -16,45 +16,40 @@ func New(db *pgx.Conn) *Repository {
 }
 
 type Note struct {
-	id int `json:"id"`
+	id   int    `json:"id"`
 	body string `json:"body"`
 }
 type Notes interface {
-	GetAll(ctx context.Context)  ([]Note, error)
+	GetAll(ctx context.Context) ([]Note, error)
 	GetNote(ctx context.Context, id int) (string, error)
 	MakeNote(ctx context.Context, body string) (int, error)
 	ChangeNote(ctx context.Context) (int, error)
 	DeleteNote(ctx context.Context) (int, error)
-	
 }
 
-
-
-func (r *Repository) GetAll(ctx context.Context)  ([]Note, error) {
+func (r *Repository) GetAll(ctx context.Context) ([]Note, error) {
 	var notes []Note
 	query := `select id, body from notes;`
 
-	rows, err = r.db.Query(ctx, query)
+	rows, err := r.db.Query(ctx, query)
 	if err != nil {
 		return notes, err
 	}
 	defer rows.Close()
 
-	
-	for rows.Next(){
+	for rows.Next() {
 		var ID int
 		var BODY string
-		err := rows.Scan(&ID, &BODY)
-		if er != nil {
-			return notes, er
+		err = rows.Scan(&ID, &BODY)
+		if err != nil {
+			return notes, err
 		}
 
-		note := Note {id: ID, body : BODY,}
+		note := Note{id: ID, body: BODY}
 		notes = append(notes, note)
 	}
 	return notes, nil
 }
-
 
 func (r *Repository) GetNote(ctx context.Context, id int) (string, error) {
 

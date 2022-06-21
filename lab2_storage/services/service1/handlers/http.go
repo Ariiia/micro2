@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"gitlab.com/kpi-lab/microservices-demo/services/service1/repository"
@@ -12,10 +13,10 @@ import (
 )
 
 type NotesServer struct {
-	db repository.postgres.Notes
+	db postgres.Notes
 }
 
-func NewNotesServer(db repository.postgres.Notes) *NotesServer {
+func NewNotesServer(db postgres.Notes) *NotesServer {
 	return &NotesServer{
 		db: db,
 	}
@@ -31,17 +32,15 @@ func NewVisitsServer(db repository.Visits) *Server {
 	}
 }
 
-
-
 func (s *NotesServer) GetAll(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	lines, err := s.db.GetAll(r.Context()) 
-	if err != nil{
+	lines, err := s.db.GetAll(r.Context())
+	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))
 	} else {
 		json.NewEncoder(w).Encode(lines)
-		
+
 	}
 }
 
@@ -69,7 +68,8 @@ func (s *NotesServer) GetNote(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(keys[0])
 
 	note, err := s.db.GetNote(r.Context(), id)
-	_, err = w.Write([]byte(note))
+
+	_, err = w.Write([]byte("{note: " + note + "}"))
 }
 
 func (s *NotesServer) MakeNote(w http.ResponseWriter, r *http.Request) {
