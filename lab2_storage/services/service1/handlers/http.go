@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"gitlab.com/kpi-lab/microservices-demo/services/service1/repository"
+	"gitlab.com/kpi-lab/microservices-demo/services/service1/repository/postgres"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -11,10 +12,10 @@ import (
 )
 
 type NotesServer struct {
-	db repository.Notes
+	db repository.postgres.Notes
 }
 
-func NewNotesServer(db repository.Notes) *NotesServer {
+func NewNotesServer(db repository.postgres.Notes) *NotesServer {
 	return &NotesServer{
 		db: db,
 	}
@@ -32,17 +33,17 @@ func NewVisitsServer(db repository.Visits) *Server {
 
 
 
-// func (s *NotesServer) GetAll(w http.ResponseWriter, r *http.Request) {
-// 	w.Header().Set("Content-Type", "application/json")
-// 	lines, err := s.db.GetAll(r.Context()) 
-// 	if err != nil{
-// 		w.WriteHeader(http.StatusInternalServerError)
-// 		w.Write([]byte(err.Error()))
-// 	} else {
-// 		json.NewEncoder(w).Encode(lines)
+func (s *NotesServer) GetAll(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	lines, err := s.db.GetAll(r.Context()) 
+	if err != nil{
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
+	} else {
+		json.NewEncoder(w).Encode(lines)
 		
-// 	}
-// }
+	}
+}
 
 func (s *NotesServer) GetNote(w http.ResponseWriter, r *http.Request) {
 
